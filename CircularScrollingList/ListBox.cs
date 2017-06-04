@@ -6,7 +6,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ListBox : MonoBehaviour
+public class ListBox : MonoBehaviour, IPointerUpHandler,IPointerDownHandler
 {
 	public int listBoxID;	// Must be unique, and count from 0
 	public Text content;		// The content of the list box
@@ -32,7 +32,9 @@ public class ListBox : MonoBehaviour
 	private int _slidingFramesLeft;
 
 	public bool keepSliding { set { _keepSliding = value; } }
-
+	
+	private Vector3 _btnLocation;
+	
 	/* Notice: ListBox will initialize its variables from ListPositionCtrl.
 	 * Make sure that the execution order of script ListPositionCtrl is prior to
 	 * ListBox.
@@ -50,7 +52,19 @@ public class ListBox : MonoBehaviour
 		initialPosition( listBoxID );
 		initialContent();
 	}
-
+	public void OnPointerDown(PointerEventData eventData){
+		_btnLocation = transform.position;
+	}
+	
+	public void OnPointerUp(PointerEventData eventData)
+	{
+		Vector3 curPos = transform.position;
+		if(_btnLocation.y!=curPos.y){
+			gameObject.GetComponent<Button> ().interactable = false;
+		}else{
+			gameObject.GetComponent<Button> ().interactable = true;
+		}
+	}
 	/* Initialize the content of ListBox.
 	 */
 	void initialContent()
