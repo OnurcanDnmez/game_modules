@@ -6,7 +6,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ListBox : MonoBehaviour
+public class ListBox : MonoBehaviour, IPointerUpHandler,IPointerDownHandler
 {
 	public int listBoxID;   // Must be unique, and count from 0
 	public Text content;        // The content of the list box
@@ -31,7 +31,8 @@ public class ListBox : MonoBehaviour
 	private bool _keepSliding = false;
 	private int _slidingFramesLeft;
 	private bool _needToAlignToCenter = false;
-
+	private Vector3 _btnLocation;
+	
 	public bool keepSliding { set { _keepSliding = value; } }
 	public bool needToAlignToCenter { set { _needToAlignToCenter = value; } }
 
@@ -51,6 +52,20 @@ public class ListBox : MonoBehaviour
 
 		initialPosition(listBoxID);
 		initialContent();
+	}
+	
+	public void OnPointerDown(PointerEventData eventData){
+		_btnLocation = transform.position;
+	}
+	public void OnPointerUp(PointerEventData eventData)
+	{
+		Vector3 curPos = transform.position;
+		if((ListPositionCtrl.Instance.direction==ListPositionCtrl.Direction.VERTICAL&&_btnLocation.y!=curPos.y)
+			||(ListPositionCtrl.Instance.direction==ListPositionCtrl.Direction.HORIZONTAL&&_btnLocation.y!=curPos.x)){
+			gameObject.GetComponent<Button> ().interactable = false;
+		}else{
+			gameObject.GetComponent<Button> ().interactable = true;
+		}
 	}
 
 	/* Initialize the content of ListBox.
